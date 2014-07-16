@@ -278,3 +278,34 @@ bpwatch start anvil_appdir_commit
 
 bpwatch stop anvil_appdir_commit
 bpwatch stop compile
+
+# Phantomjs
+PHANTOMJS_VERSION="1.9.7"
+PHANTOMJS_ARCHIVE_NAME=phantomjs-${PHANTOMJS_VERSION}-linux-x86_64
+PHANTOMJS_FILE_NAME=${PHANTOMJS_ARCHIVE_NAME}.tar.bz2
+BUILDPACK_PHANTOMJS_PACKAGE=https://bitbucket.org/ariya/phantomjs/downloads/${FILE_NAME}
+
+
+# After fetching, phantomjs-1.9.7-linux-x86_64 in $CACHE_DIR
+if ! [ -e $CACHE_DIR/$PHANTOMJS_FILE_NAME ]; then
+    echo "------> Fetching PhantomJS ${PHANTOMJS_VERSION} from ${BUILDPACK_PHANTOMJS_PACKAGE}"
+    curl $BUILDPACK_PHANTOMJS_PACKAGE -L -s -o $CACHE_DIR/$PHANTOMJS_FILE_NAME
+fi
+
+# After extracting, phantomjs(include phantomjs/bin and phantomjs/lib) is in
+# $BUILD/vendor/phantomjs
+echo "------> Extracting PhantomJS ${PHANTOMJS_VERSION} to ${BUILD_DIR}/vendor/phantomjs"
+
+mkdir -p $CACHE_DIR/$PHANTOMJS_ARCHIVE_NAME
+mkdir -p $BUILD_DIR/vendor
+tar jxf $CACHE_DIR/$PHANTOMJS_FILE_NAME -C $CACHE_DIR  # extract phantomjs into $CACHE_DIR
+mv $CACHE_DIR/$PHANTOMJS_ARCHIVE_NAME $BUILD_DIR/vendor/phantomjs  # move phantomjs into $BUILD_DIR/vendor
+
+# export Phantomjs's env
+echo "------> exporting PATH and LIBRARY_PATH"
+PHANTOMJS_PROFILE_PATH="$BUILD_DIR/.profile.d/phantomjs.sh"
+mkdir -p $(dirname $PHANTOMJS_PROFILE_PATH)
+echo 'export PATH="$PATH:vendor/phantomjs/bin"' >> $PHANTOMJS_PROFILE_PATH
+echo 'export PATH="$PATH:vendor/phantomjs/lib"' >> $PHANTOMJS_PROFILE_PATH
+
+
