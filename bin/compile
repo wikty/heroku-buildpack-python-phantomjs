@@ -280,13 +280,17 @@ bpwatch stop anvil_appdir_commit
 bpwatch stop compile
 
 # Phantomjs
+BUILD_DIR=$1
+CACHE_DIR=$2
+ENV_DIR=$3
 PHANTOMJS_VERSION="1.9.7"
 PHANTOMJS_ARCHIVE_NAME=phantomjs-${PHANTOMJS_VERSION}-linux-x86_64
 PHANTOMJS_FILE_NAME=${PHANTOMJS_ARCHIVE_NAME}.tar.bz2
-BUILDPACK_PHANTOMJS_PACKAGE=https://bitbucket.org/ariya/phantomjs/downloads/${FILE_NAME}
+BUILDPACK_PHANTOMJS_PACKAGE=https://bitbucket.org/ariya/phantomjs/downloads/${PHANTOMJS_FILE_NAME}
 
 
 # After fetching, phantomjs-1.9.7-linux-x86_64 in $CACHE_DIR
+mkdir -p $CACHE_DIR
 if ! [ -e $CACHE_DIR/$PHANTOMJS_FILE_NAME ]; then
     echo "------> Fetching PhantomJS ${PHANTOMJS_VERSION} from ${BUILDPACK_PHANTOMJS_PACKAGE}"
     curl $BUILDPACK_PHANTOMJS_PACKAGE -L -s -o $CACHE_DIR/$PHANTOMJS_FILE_NAME
